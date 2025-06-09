@@ -1,0 +1,36 @@
+name: CI/CD for Go Web App
+
+on:
+  push:
+    branches:
+      - main  # or your desired branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Log in to DockerHub
+      run: echo "${{ nishakirthan }}" | docker login -u "${{ $nishakirthan }}" --password-stdin
+
+    - name: Build and push Docker image
+      run: |
+        docker build -t nishakirthan/microdegree:latest .
+        docker push nishakirthan/microdegree:latest
+
+    - name: Set up Kubeconfig
+      run: |
+        mkdir -p $HOME/.kube
+        echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 -d > $HOME/.kube/config
+
+    - name: Deploy to Kubernetes
+      run: |
+        kubectl apply -f k8s/deployment.yaml
+        kubectl apply -f k8s/service.yaml
+
+    - name: Check deployment rollout status
+      run: |
+        kubectl rollout status deployment/go-web-app

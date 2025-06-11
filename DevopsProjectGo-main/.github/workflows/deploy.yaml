@@ -18,8 +18,8 @@ jobs:
 
     - name: Build and push Docker image
       run: |
-        docker build -t nishakirthan/microdegree:latest .
-        docker push nishakirthan/microdegree:latest
+        docker build -t nishakirthan/cicd:latest .
+        docker push nishakirthan/cicd:latest
 
     - name: Set up Kubeconfig
       run: |
